@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Lakehouse",
+    "displayName": "Chess_ETL_Lakehouse"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "7fe1bd5a-40ac-9311-4086-d19f371b8757"
+  }
+}

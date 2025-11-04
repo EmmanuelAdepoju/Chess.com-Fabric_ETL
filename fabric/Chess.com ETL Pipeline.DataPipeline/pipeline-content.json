@@ -1,0 +1,144 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "Copy",
+        "typeProperties": {
+          "source": {
+            "type": "JsonSource",
+            "formatSettings": {
+              "type": "JsonReadSettings"
+            },
+            "storeSettings": {
+              "type": "HttpReadSettings",
+              "requestMethod": "GET"
+            },
+            "datasetSettings": {
+              "type": "Json",
+              "typeProperties": {
+                "location": {
+                  "type": "HttpServerLocation",
+                  "relativeUrl": {
+                    "value": "@concat(pipeline().parameters.ChessUsername, '/games/', pipeline().parameters.Year, '/', pipeline().parameters.Month)",
+                    "type": "Expression"
+                  }
+                }
+              },
+              "schema": {},
+              "externalReferences": {
+                "connection": "19a2e336-f54e-41d4-a07f-06a6fb0e2fa0"
+              },
+              "annotations": []
+            }
+          },
+          "sink": {
+            "type": "JsonSink",
+            "formatSettings": {
+              "type": "JsonWriteSettings"
+            },
+            "storeSettings": {
+              "type": "LakehouseWriteSettings"
+            },
+            "datasetSettings": {
+              "type": "Json",
+              "typeProperties": {
+                "location": {
+                  "type": "LakehouseLocation",
+                  "folderPath": {
+                    "value": "@concat('Bronze/', pipeline().parameters.Year, '/', pipeline().parameters.Month)",
+                    "type": "Expression"
+                  },
+                  "fileName": "games.json"
+                }
+              },
+              "schema": {},
+              "linkedService": {
+                "name": "Chess_ETL_Lakehouse",
+                "properties": {
+                  "type": "Lakehouse",
+                  "typeProperties": {
+                    "artifactId": "7fe1bd5a-40ac-9311-4086-d19f371b8757",
+                    "workspaceId": "00000000-0000-0000-0000-000000000000",
+                    "rootFolder": "Files"
+                  },
+                  "annotations": []
+                }
+              },
+              "annotations": []
+            }
+          },
+          "enableStaging": false
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "PullChessData",
+        "dependsOn": []
+      },
+      {
+        "type": "TridentNotebook",
+        "typeProperties": {
+          "notebookId": "264df74e-871f-bc50-47ce-5007d36a2010",
+          "workspaceId": "00000000-0000-0000-0000-000000000000",
+          "parameters": {
+            "username": {
+              "value": {
+                "value": "@pipeline().parameters.ChessUsername",
+                "type": "Expression"
+              },
+              "type": "string"
+            },
+            "year": {
+              "value": {
+                "value": "@pipeline().parameters.Year",
+                "type": "Expression"
+              },
+              "type": "int"
+            },
+            "month": {
+              "value": {
+                "value": "@pipeline().parameters.Month",
+                "type": "Expression"
+              },
+              "type": "string"
+            }
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Transform_Json_to_silver_layer",
+        "dependsOn": [
+          {
+            "activity": "PullChessData",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      }
+    ],
+    "parameters": {
+      "ChessUsername": {
+        "type": "string",
+        "defaultValue": "rhythmbear1"
+      },
+      "Month": {
+        "type": "string",
+        "defaultValue": "01"
+      },
+      "Year": {
+        "type": "string",
+        "defaultValue": "2025"
+      }
+    }
+  }
+}

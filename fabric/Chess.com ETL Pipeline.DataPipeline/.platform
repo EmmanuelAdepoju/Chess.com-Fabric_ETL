@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "DataPipeline",
+    "displayName": "Chess.com ETL Pipeline"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "f21f2531-7833-8a2a-4719-43b13b4921dd"
+  }
+}
